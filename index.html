@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--<meta name="description" content="AVT Multimodal Dataset">-->
+        <title>AVT Stable Diffusion</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <script src="script.js"></script>
+        <h1 style="font-size:60px;">AVT Stable Diffusion</h1>
+        <p>This is a small preview of the results that can be obtained with the audio-to-image model from our soon to be published research<br>
+        <p style="font-size:35px;margin:0;margin-top:0;margin-bottom:0;"><em>Acoustic Visual Transformations: Transfer Learning for Audio-Driven Image-to-Image Translation</em></p>
+        <p>by Jorge E. León and Miguel Carrasco (Universidad Adolfo Ibánez (UAI), Santiago, Chile).<br><br></p>
+        </p>
+        <hr><br>
+        <div class="row">
+            <div class="column" style="width:25.00%;">
+                <label for="reference_image">Reference image: </label>
+                <select name="" id="reference_image" onchange="select_image()">
+                    <option value="ninguna">None</option>
+                    <option value="1">Image 1</option>
+                    <option value="4">Image 2</option>
+                    <option value="5">Image 3</option>
+                    <option value="7">Image 4</option>
+                    <option value="10">Image 5</option>
+                    <option value="12">Image 6</option>
+                    <option value="13">Image 7</option>
+                    <option value="16">Image 8</option>
+                    <option value="18">Image 9</option>
+                    <option value="19">Image 10</option>
+                </select>
+            </div>
+            <div class="column" style="width:50.00%;">
+                <label for="model_version">Model version: </label>
+                <select name="" id="model_version" onchange="select_generation_selected()">
+                    <option value="p">A1</option>
+                    <option value="a">A2</option>
+                    <option value="e">A3</option>
+                    <option value="base">Averaged A</option>
+                    <option value="pe">B1</option>
+                    <option value="ae">B2</option>
+                    <option value="ee">B3</option>
+                    <option value="extra">Averaged B</option>
+                    <option value="iniciales">Averaged AB</option>
+                    <option value="pn">C1</option>
+                    <option value="an">C2</option>
+                    <option value="en">C3</option>
+                    <option value="neo">Averaged C</option>
+                    <option value="todos">Averaged ABC</option>
+                    <option value="todos_t">Averaged ABC (mimicking text encoder)</option>
+                    <option value="todos_i">Averaged ABC (mimicking image encoder)</option>
+                    <option value="todos_ti">Averaged ABC (mimicking both encoders)</option>
+                </select>
+            </div>
+            <div class="column" style="width:25.00%;">
+                <label for="encoder_input">Encoder input: </label>
+                <select name="" id="encoder_input" onchange="select_audio()">
+                    <option value="a bonfire">A bonfire</option>
+                    <option value="a dog barking">A dog barking</option>
+                    <option value="a guitar being played">A guitar being played</option>
+                    <option value="a gun being shot">A gun being shot</option>
+                    <option value="a lion roaring">A lion roaring</option>
+                    <option value="an engine blowing air">An engine blowing air</option>
+                    <option value="an organ being played">An organ being played</option>
+                    <option value="children talking and playing">Children talking and playing</option>
+                    <option value="the interior of a coffee shop">The interior of a coffee shop</option>
+                    <option value="waves crashing against rocks">Waves crashing against rocks</option>
+                </select>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="column" style="width:25.00%;">
+                <img id="image_file" src="" width="46%;">
+            </div>
+            <div class="column" style="width:50.00%;">
+                <div class="column" style="width:48.00%;">
+                    <img id="generation_selected_1" src="" width="48%;">
+                    <img id="generation_selected_2" src="" width="48%;">
+                    <br>
+                    <p>Conditioned only with audio</p>
+                </div>
+                <div class="column" style="width:0.40%;">
+                    <div class="verticalLine"></div>
+                </div>
+                <div class="column" style="width:48.00%;">
+                    <img id="generation_selected_3" src="" width="48%;">
+                    <img id="generation_selected_4" src="" width="48%;">
+                    <br>
+                    <p>Conditioned with audio and text</p>
+                </div>
+            </div>
+            <div class="column" style="width:25.00%;">
+                <br><br><br>
+                <audio controls><source id="audio_file" src=""></audio>
+            </div>
+        </div>
+        <hr><br>
+        <div class="row">
+            <div class="column" style="width:20.00%;">
+                <p>Images created with random encodings<br>(<em>theorical worst case scenario</em>)</p>
+                <img id="generation_random_1" src="" width="57.5%;">
+                <br>
+                <img id="generation_random_2" src="" width="57.5%;">
+            </div>
+            <div class="column" style="width:0.40%;">
+                <div class="verticalLine" style="height:525px;"></div>
+            </div>
+            <div class="column" style="width:58.00%;">
+                <div class="scrollable">
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_p_1" src="" width="42%;">
+                            <img id="generation_p_2" src="" width="42%;">
+                            <br>
+                            <p>A1<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_p_3" src="" width="42%;">
+                            <img id="generation_p_4" src="" width="42%;">
+                            <br>
+                            <p>A1<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_a_1" src="" width="42%;">
+                            <img id="generation_a_2" src="" width="42%;">
+                            <br>
+                            <p>A2<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_a_3" src="" width="42%;">
+                            <img id="generation_a_4" src="" width="42%;">
+                            <br>
+                            <p>A2<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_e_1" src="" width="42%;">
+                            <img id="generation_e_2" src="" width="42%;">
+                            <br>
+                            <p>A3<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_e_3" src="" width="42%;">
+                            <img id="generation_e_4" src="" width="42%;">
+                            <br>
+                            <p>A3<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_base_1" src="" width="42%;">
+                            <img id="generation_base_2" src="" width="42%;">
+                            <br>
+                            <p>Averaged A<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_base_3" src="" width="42%;">
+                            <img id="generation_base_4" src="" width="42%;">
+                            <br>
+                            <p>Averaged A<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_pe_1" src="" width="42%;">
+                            <img id="generation_pe_2" src="" width="42%;">
+                            <br>
+                            <p>B1<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_pe_3" src="" width="42%;">
+                            <img id="generation_pe_4" src="" width="42%;">
+                            <br>
+                            <p>B1<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_ae_1" src="" width="42%;">
+                            <img id="generation_ae_2" src="" width="42%;">
+                            <br>
+                            <p>B2<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_ae_3" src="" width="42%;">
+                            <img id="generation_ae_4" src="" width="42%;">
+                            <br>
+                            <p>B2<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_ee_1" src="" width="42%;">
+                            <img id="generation_ee_2" src="" width="42%;">
+                            <br>
+                            <p>B3<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_ee_3" src="" width="42%;">
+                            <img id="generation_ee_4" src="" width="42%;">
+                            <br>
+                            <p>B3<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_extra_1" src="" width="42%;">
+                            <img id="generation_extra_2" src="" width="42%;">
+                            <br>
+                            <p>Averaged B<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_extra_3" src="" width="42%;">
+                            <img id="generation_extra_4" src="" width="42%;">
+                            <br>
+                            <p>Averaged B<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_iniciales_1" src="" width="42%;">
+                            <img id="generation_iniciales_2" src="" width="42%;">
+                            <br>
+                            <p>Averaged AB<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_iniciales_3" src="" width="42%;">
+                            <img id="generation_iniciales_4" src="" width="42%;">
+                            <br>
+                            <p>Averaged AB<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_pn_1" src="" width="42%;">
+                            <img id="generation_pn_2" src="" width="42%;">
+                            <br>
+                            <p>C1<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_pn_3" src="" width="42%;">
+                            <img id="generation_pn_4" src="" width="42%;">
+                            <br>
+                            <p>C1<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_an_1" src="" width="42%;">
+                            <img id="generation_an_2" src="" width="42%;">
+                            <br>
+                            <p>C2<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_an_3" src="" width="42%;">
+                            <img id="generation_an_4" src="" width="42%;">
+                            <br>
+                            <p>C2<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_en_1" src="" width="42%;">
+                            <img id="generation_en_2" src="" width="42%;">
+                            <br>
+                            <p>C3<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_en_3" src="" width="42%;">
+                            <img id="generation_en_4" src="" width="42%;">
+                            <br>
+                            <p>C3<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_neo_1" src="" width="42%;">
+                            <img id="generation_neo_2" src="" width="42%;">
+                            <br>
+                            <p>Averaged C<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_neo_3" src="" width="42%;">
+                            <img id="generation_neo_4" src="" width="42%;">
+                            <br>
+                            <p>Averaged C<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_todos_1" src="" width="42%;">
+                            <img id="generation_todos_2" src="" width="42%;">
+                            <br>
+                            <p>Averaged ABC<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_todos_3" src="" width="42%;">
+                            <img id="generation_todos_4" src="" width="42%;">
+                            <br>
+                            <p>Averaged ABC<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_todos_t_1" src="" width="42%;">
+                            <img id="generation_todos_t_2" src="" width="42%;">
+                            <br>
+                            <p>Averaged ABC (mimicking text encoder)<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_todos_t_3" src="" width="42%;">
+                            <img id="generation_todos_t_4" src="" width="42%;">
+                            <br>
+                            <p>Averaged ABC (mimicking text encoder)<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_todos_i_1" src="" width="42%;">
+                            <img id="generation_todos_i_2" src="" width="42%;">
+                            <br>
+                            <p>Averaged ABC (mimicking image encoder)<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_todos_i_3" src="" width="42%;">
+                            <img id="generation_todos_i_4" src="" width="42%;">
+                            <br>
+                            <p>Averaged ABC (mimicking image encoder)<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_todos_ti_1" src="" width="42%;">
+                            <img id="generation_todos_ti_2" src="" width="42%;">
+                            <br>
+                            <p>Averaged ABC (mimicking both encoders)<br>Conditioned only with audio</p>
+                        </div>
+                        <div class="column" style="width:0.40%;">
+                            <div class="verticalLine" style="height:225px;"></div>
+                        </div>
+                        <div class="column" style="width:48.00%;">
+                            <img id="generation_todos_ti_3" src="" width="42%;">
+                            <img id="generation_todos_ti_4" src="" width="42%;">
+                            <br>
+                            <p>Averaged ABC (mimicking both encoders)<br>Conditioned with audio and text</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="column" style="width:0.40%;">
+                <div class="verticalLine" style="height:425px;"></div>
+            </div> -->
+            <div class="column" style="width:20.00%;">
+                <p>Images created with the original text encoder<br>(<em>theorical best case scenario</em>)</p>
+                <img id="generation_t_1" src="" width="57.5%;">
+                <br>
+                <img id="generation_t_2" src="" width="57.5%;">
+            </div>
+        </div>
+    </body>
+</html>
